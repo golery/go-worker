@@ -11,5 +11,6 @@
   "description": "",
   "dependencies": {
     "typescript": "^4.5.5"
-  }
+  },
+  "type": "module"
 }
