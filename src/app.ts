@@ -1,10 +1,11 @@
 import http from 'http';
 import express, { Express } from 'express';
+import {test} from "./server";
 
 const app: Express = express();
 
-app.get('/', (_req: any, res: any) => {
-    res.send('Welcome to Edurekas REST API with Node.js Tutorial!!');
+app.get('/', async (_req: any, res: any) => {
+    await test(res);
 });
 
 const httpServer = http.createServer(app);
