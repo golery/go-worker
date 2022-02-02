@@ -2,7 +2,7 @@ import { remote } from 'webdriverio';
 import {Builder} from 'selenium-webdriver';
 import {Options} from 'selenium-webdriver/chrome';
 
-const mode = 'selenium';
+let mode = 'bsr';
 export async function selenium(res: any) {
     const options =new Options();
     (options as any).options_["debuggerAddress"] = "127.0.0.1:9222";
@@ -11,8 +11,12 @@ export async function selenium(res: any) {
     res.json('DONE');
 }
 export async function test(res: any) {
-    if (mode.length === 0) {
+    if (mode === 'selenium') {
         await selenium(res);
+        return;
+    }
+    if (mode === 'bsr') {
+        await testBSR(res);
         return;
     }
     const browser = await remote({
@@ -47,4 +51,38 @@ export async function test(res: any) {
 
         res.json('DONE');
 
+}
+
+async function getBrowser() {
+    const browser = await remote({
+        capabilities: {
+            browserName: 'chrome',
+            'goog:chromeOptions': {
+                debuggerAddress: "localhost:9222"
+
+            } as any
+        },
+        logLevel: 'trace',
+    });
+    // await browser.setWindowSize(1400, 800);
+    return browser;
+}
+export async function testBSR(res: any) {
+    const browser = await getBrowser();
+    await browser.url('https://ron.k8s.beta.blend.com/rooms/e54e2aaf-0670-42a2-8f68-cc9de702d5ae');
+
+    try {
+        const {$} = browser;
+        let b = await browser.$('button=Continue');
+        await b.waitForDisplayed();
+        await b.click();
+        b = await browser.$('button=Continue');
+        await b.waitForDisplayed();
+        await b.click();
+    } catch(e) {
+        res.json('ERROR');
+        console.error(e);
+        throw e;
+    }
+    res.json('DONE');
 }
