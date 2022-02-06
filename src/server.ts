@@ -1,8 +1,9 @@
 import { remote } from 'webdriverio';
 import {Builder} from 'selenium-webdriver';
 import {Options} from 'selenium-webdriver/chrome';
+import {WebDriver} from "./WebDriver";
 
-let mode = 'bsr';
+let mode = 'lt';
 export async function selenium(res: any) {
     const options =new Options();
     (options as any).options_["debuggerAddress"] = "127.0.0.1:9222";
@@ -17,6 +18,10 @@ export async function test(res: any) {
     }
     if (mode === 'bsr') {
         await testBSR(res);
+        return;
+    }
+    if (mode === 'lt') {
+        await testLendingTree(res);
         return;
     }
     const browser = await remote({
@@ -67,6 +72,7 @@ async function getBrowser() {
     // await browser.setWindowSize(1400, 800);
     return browser;
 }
+
 export async function testBSR(res: any) {
     const browser = await getBrowser();
     await browser.url('https://ron.k8s.beta.blend.com/rooms/e54e2aaf-0670-42a2-8f68-cc9de702d5ae');
@@ -85,4 +91,12 @@ export async function testBSR(res: any) {
         throw e;
     }
     res.json('DONE');
+}
+
+export async function testLendingTree(res: any) {
+    const driver = new WebDriver();
+    await driver.connect();
+    await driver.openUrl('https://www.lendingtree.com/');
+    await driver.click();
+    await driver.click2();
 }
